@@ -1,15 +1,15 @@
 #![deny(clippy::all)]
 
-use std::{path::Path};
+use core_foundation::url::CFURL;
+use launch_services::{application_urls_for_url, default_application_url_for_url, LSRolesMask};
 use napi::{bindgen_prelude::Array, Env};
 use napi_derive::napi;
-use launch_services::{application_urls_for_url, default_application_url_for_url, LSRolesMask};
-use core_foundation::url::{CFURL};
+use std::path::Path;
 
 #[napi(object)]
 struct AppInfo {
-	pub url: String,
-	pub is_default: bool,
+  pub url: String,
+  pub is_default: bool,
 }
 
 #[napi]
@@ -25,10 +25,12 @@ pub fn urls_for_file(env: Env, url: String) -> Array {
   for url in &app_urls {
     let absolute_path = url.absolute().to_path().unwrap();
     let absolute_url = absolute_path.to_str().unwrap();
-    arr.insert(AppInfo {
-      url: absolute_url.to_string(),
-      is_default: absolute_url == default_absolute_url,
-    }).unwrap();
+    arr
+      .insert(AppInfo {
+        url: absolute_url.to_string(),
+        is_default: absolute_url == default_absolute_url,
+      })
+      .unwrap();
   }
 
   arr
